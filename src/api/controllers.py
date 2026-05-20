@@ -11,6 +11,7 @@ from src.services.user_services import UpdateUserDTO
 from src.services.user_services import DeleteUser
 from src.services.user_services import DeleteDTO
 from src.services.user_services import DeleteUserOutputDTO
+from src.api.error_mapper import mapper
 from pydantic import BaseModel
 
 class ErrorDTO(BaseModel):
@@ -37,13 +38,25 @@ class CreateUserController(BaseController):
                 body=result
             )
         except Exception as e:
-            result = ErrorDTO(
-                message="User not created",
-                error=str(e)
-            )
+            mapped_error_class = mapper.get(type(e))
+
+            if mapped_error_class is not None:
+                mapped_error = mapped_error_class(str(e))
+
+                return HttpResponse[ErrorDTO](
+                    status_code=409,
+                    body=ErrorDTO(
+                        message="User Email already exists",
+                        error=mapped_error.__class__.__name__,
+                    ),
+                )
+
             return HttpResponse[ErrorDTO](
                 status_code=500,
-                body=result
+                body=ErrorDTO(
+                    message="User not created",
+                    error=str(e),
+                ),
             )
 
 
@@ -100,6 +113,19 @@ class UpdateUserController(BaseController):
                 body=result
             )
         except Exception as e:
+            mapped_error_class = mapper.get(type(e))
+
+            if mapped_error_class is not None:
+                mapped_error = mapped_error_class(str(e))
+            
+                return HttpResponse[ErrorDTO](
+                    status_code=409,
+                    body=ErrorDTO(
+                        message="User Email already exists",
+                        error=mapped_error.__class__.__name__,
+                    ),
+                )
+
             return HttpResponse[ErrorDTO](
                 status_code=500,
                 body=ErrorDTO(

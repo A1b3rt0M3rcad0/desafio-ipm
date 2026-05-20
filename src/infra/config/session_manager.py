@@ -25,9 +25,13 @@ class SessionManager:
         return self
     
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
-        if exc_type:
+        try:
+            if exc_type:
+                await self.__session.rollback()
+            else:
+                await self.__session.commit()
+        except Exception:
             await self.__session.rollback()
-        else:
-            await self.__session.commit()
-        await self.__session.close()
-        self.__session = None
+        finally:
+            await self.__session.close()
+            self.__session = None
