@@ -38,11 +38,11 @@ class UserRepository(BaseRepository[UserEntity]):
         await session.refresh(model)
         return UserEntity.model_validate(model)
     
-    async def delete(self, id: UUID) -> None:
+    async def delete(self, id: UUID) -> UUID:
         session = self.__session_manager.session
         model = await session.get(UserModel, id)
         if model is None:
             raise LookupError(f"User {id} not found")
         await session.delete(model)
         await session.flush()
-        
+        return id

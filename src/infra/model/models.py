@@ -14,5 +14,6 @@ class BaseModel(Base):
     created_at:Mapped[datetime] = mapped_column(DateTime, default_factory=lambda: datetime.now(UTC))
 
 class User(BaseModel):
+    __tablename__ = "users"
     name:Mapped[str] = mapped_column(String, nullable=False)
-    email:Mapped[str] = mapped_column(String, nullable=False)
+    email:Mapped[str] = mapped_column(String, nullable=False, unique=True)
