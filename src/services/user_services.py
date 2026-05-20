@@ -86,7 +86,7 @@ class DeleteUser:
         self.__user_repositoty = user_repositoty
     
     async def execute(self, data:DeleteDTO) -> DeleteUserOutputDTO:
-        user_id = self.__user_repositoty.delete(data.id)
+        user_id = await self.__user_repositoty.delete(data.id)
         if user_id:
             return DeleteUserOutputDTO(True)
         else:
