@@ -7,17 +7,14 @@ from pydantic import BaseModel, ValidationError
 from src.api.controllers import BaseController, ErrorDTO
 from src.api.http import HttpRequest, EmptyDTO
 
-from typing import Type
-
-
 class FastAPIAdapter:
     @staticmethod
     async def adapt(
         controller: BaseController,
         request: Request,
-        body_model: Type[BaseModel] = EmptyDTO,
-        query_model: Type[BaseModel] = EmptyDTO,
-        path_model: Type[BaseModel] = EmptyDTO,
+        body_model: type[BaseModel] | BaseModel = EmptyDTO,
+        query_model: type[BaseModel] | BaseModel = EmptyDTO,
+        path_model: type[BaseModel] | BaseModel = EmptyDTO,
     ) -> JSONResponse:
         try:
             raw_body: Any = await request.json()
@@ -43,7 +40,7 @@ class FastAPIAdapter:
                 status_code=422,
                 content=ErrorDTO(
                     message="Invalid request",
-                    error=error.errors(),
+                    error=str(error.errors()),
                 ).model_dump(mode="json"),
             )
 
@@ -56,7 +53,7 @@ class FastAPIAdapter:
         )
 
     @staticmethod
-    def __resolve(model: Type[BaseModel] | BaseModel, raw: Any) -> Any:
+    def __resolve(model: type[BaseModel] | BaseModel, raw: Any) -> Any:
         if isinstance(model, BaseModel):
             return model
         return model.model_validate(raw)

@@ -42,11 +42,11 @@ async def create_user(
 @router.get("/read_user")
 async def read_user(
     request: Request,
-    id: Annotated[str, Query()],
+    id: Annotated[UUID, Query()],
 ) -> JSONResponse:
     async with SessionManager(ENGINE) as session_manager:
         controller = read_user_composer(session_manager)
-        query = ReadUserDTO(id=UUID(id))
+        query = ReadUserDTO(id=id)
         return await FastAPIAdapter.adapt(
             controller=controller,
             request=request,

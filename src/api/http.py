@@ -14,9 +14,9 @@ class HttpRequest(BaseModel, Generic[BodyT, QueryT, PathT]):
     url: str | None = None
     method: str | None = None
     headers: dict[str, Any] = Field(default_factory=dict)
-    body: BodyT | None = None
-    query_params: QueryT | None = None
-    path_params: PathT | None = None
+    body: Any = None
+    query_params: Any = None
+    path_params: Any = None
 
 
 class HttpResponse(BaseModel, Generic[ResponseT]):

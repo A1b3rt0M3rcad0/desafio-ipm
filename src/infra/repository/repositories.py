@@ -31,18 +31,20 @@ class UserRepository(BaseRepository[UserEntity]):
         if model is None:
             raise LookupError(f"User {entity.id} not found")
 
-        model.name = entity.name
-        model.email = entity.email
+        if entity.name is not None:
+            model.name = entity.name
+        if entity.email is not None:
+            model.email = entity.email
     
         await session.flush()
         await session.refresh(model)
         return UserEntity.model_validate(model)
     
-    async def delete(self, id: UUID) -> UUID:
+    async def delete(self, id: UUID) -> Optional[UUID]:
         session = self.__session_manager.session
         model = await session.get(UserModel, id)
         if model is None:
-            raise LookupError(f"User {id} not found")
+            return None
         await session.delete(model)
         await session.flush()
         return id

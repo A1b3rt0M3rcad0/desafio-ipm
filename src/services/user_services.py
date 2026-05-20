@@ -13,9 +13,9 @@ class CreateUserDTO(BaseModel):
     email:str
 
 class UserOutput(BaseModel):
-    id:UUID
-    name:str
-    email:str
+    id:UUID|None
+    name:str|None
+    email:str|None
 
 class CreateUser:
 
@@ -75,6 +75,7 @@ class UpdateUser:
         )
 
 class DeleteUserOutputDTO(BaseModel):
+    message:str
     result:bool
 
 class DeleteDTO(BaseModel):
@@ -88,6 +89,6 @@ class DeleteUser:
     async def execute(self, data:DeleteDTO) -> DeleteUserOutputDTO:
         user_id = await self.__user_repositoty.delete(data.id)
         if user_id:
-            return DeleteUserOutputDTO(result=True)
+            return DeleteUserOutputDTO(message="User deleted successfully", result=True)
         else:
-            return DeleteUserOutputDTO(result=False)
+            return DeleteUserOutputDTO(message="User not found", result=False)

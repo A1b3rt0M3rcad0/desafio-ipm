@@ -4,5 +4,5 @@ class AlreadyExists(Exception):
     pass
 
 mapper = {
-    IntegrityError.__class__.__name__: AlreadyExists
+    IntegrityError.__name__: AlreadyExists
 }
