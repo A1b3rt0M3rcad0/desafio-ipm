@@ -38,7 +38,7 @@ class CreateUserController(BaseController):
                 body=result
             )
         except Exception as e:
-            mapped_error_class = mapper.get(type(e))
+            mapped_error_class = mapper.get(e.__class__.__name__)
 
             if mapped_error_class is not None:
                 mapped_error = mapped_error_class(str(e))
@@ -113,7 +113,7 @@ class UpdateUserController(BaseController):
                 body=result
             )
         except Exception as e:
-            mapped_error_class = mapper.get(type(e))
+            mapped_error_class = mapper.get(e.__class__.__name__)
 
             if mapped_error_class is not None:
                 mapped_error = mapped_error_class(str(e))

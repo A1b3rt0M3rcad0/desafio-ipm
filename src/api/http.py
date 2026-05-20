@@ -1,22 +1,22 @@
-from typing import Any, TypeVar, Generic
+from typing import Any, TypeVar, Generic, Optional
 from pydantic import BaseModel, Field
-
-BodyT = TypeVar("BodyT", bound=BaseModel)
-QueryT = TypeVar("QueryT", bound=BaseModel)
-PathT = TypeVar("PathT", bound=BaseModel)
-ResponseT = TypeVar("ResponseT")
 
 class EmptyDTO(BaseModel):
     pass
+
+BodyT = TypeVar("BodyT", bound=BaseModel, default=EmptyDTO)
+QueryT = TypeVar("QueryT", bound=BaseModel, default=EmptyDTO)
+PathT = TypeVar("PathT", bound=BaseModel, default=EmptyDTO)
+ResponseT = TypeVar("ResponseT")
 
 class HttpRequest(BaseModel, Generic[BodyT, QueryT, PathT]):
     user: str | None = None
     url: str | None = None
     method: str | None = None
     headers: dict[str, Any] = Field(default_factory=dict)
-    body: BodyT
-    query_params: QueryT
-    path_params: PathT
+    body: BodyT | None = None
+    query_params: QueryT | None = None
+    path_params: PathT | None = None
 
 
 class HttpResponse(BaseModel, Generic[ResponseT]):
