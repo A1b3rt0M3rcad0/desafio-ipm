@@ -3,27 +3,48 @@ from src.ml.model import MODEL
 from typing import List
 import numpy as np
 from pydantic import BaseModel
+from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 class MLInputPredictionDTO(BaseModel):
-    input_data: List[List[int]]
+    a:int
+    b:int
 
 class MLOutputPredictionDTO(BaseModel):
-    predicted_class: List[int]
+    message:str
+    prediction:int
+
+_executor = ThreadPoolExecutor(max_workers=4)
 
 class MLPredictionService:
     def __init__(self):
         self.__scaler = SCALER
         self.__model = MODEL
+        self.__executor = _executor
 
-    def execute(self, input_data: MLInputPredictionDTO) -> MLOutputPredictionDTO:
-        data_array = np.array(input_data.input_data)
+    async def execute(self, data: MLInputPredictionDTO) -> MLOutputPredictionDTO:
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(self.__executor, self.__predict_sync, data)
+
+    def __predict_sync(self, data: MLInputPredictionDTO) -> MLOutputPredictionDTO:
+        data_array = np.array([[data.a, data.b]])
         scaled_data = self.__scaler.scale(X=data_array)
         prediction = self.__model.predict(scaled_data)
-        return MLOutputPredictionDTO(predicted_class=prediction.tolist())
+        result = prediction.tolist()[0]
+        return MLOutputPredictionDTO(message="Is Positive" if result > 0 else "Is Negative", prediction=result)
 
 if __name__ == "__main__":
-    # Example usage
-    service = MLPredictionService()
-    input_data = MLInputPredictionDTO(input_data=[[5, 3], [-200, 40]])
-    prediction = service.execute(input_data)
-    print(f"Predicted class: {prediction}")
+
+    async def main():
+        service = MLPredictionService()
+        input_data = MLInputPredictionDTO(a=5, b=3)
+        prediction = await service.execute(input_data)
+        print(f"Predicted class: {prediction}")
+
+    asyncio.run(main())
+    asyncio.run(main())
+    asyncio.run(main())
+    asyncio.run(main())
+    asyncio.run(main())
+    asyncio.run(main())
+    asyncio.run(main())

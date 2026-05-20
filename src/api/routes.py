@@ -3,12 +3,14 @@ from typing import Annotated
 from fastapi import Body, Query, Request, APIRouter
 from fastapi.responses import JSONResponse
 
+from src.services.ml_services import MLInputPredictionDTO
 from src.api.adapter import EmptyDTO, FastAPIAdapter
 from src.api.composers import (
     create_user_composer,
     read_user_composer,
     update_user_composer,
     delete_user_composer,
+    ml_prediction_composer
 )
 from src.api.config import ENGINE
 from src.infra.config.session_manager import SessionManager
@@ -86,3 +88,17 @@ async def delete_user(
             query_model=EmptyDTO(),
             path_model=EmptyDTO(),
         )
+
+@router.post("/ml_prediction")
+async def ml_prediction(
+    request: Request,
+    body: Annotated[MLInputPredictionDTO, Body()],
+) -> JSONResponse:
+    controller = ml_prediction_composer()
+    return await FastAPIAdapter.adapt(
+        controller=controller,
+        request=request,
+        body_model=body,
+        query_model=EmptyDTO(),
+        path_model=EmptyDTO(),
+    )

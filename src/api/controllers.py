@@ -14,6 +14,12 @@ from src.services.user_services import DeleteUserOutputDTO
 from src.api.error_mapper import mapper
 from pydantic import BaseModel
 
+from src.services.ml_services import (
+    MLInputPredictionDTO,
+    MLOutputPredictionDTO,
+    MLPredictionService
+)
+
 class ErrorDTO(BaseModel):
     message:str
     error:str
@@ -153,6 +159,28 @@ class DeleteUserController(BaseController):
                 status_code=500,
                 body=ErrorDTO(
                     message="Error deleting user",
+                    error=str(e)
+                )
+            )
+
+class MLPredictionController(BaseController):
+
+    def __init__(self, ml_prediction_service: MLPredictionService) -> None:
+        self.__ml_prediction_service = ml_prediction_service
+
+    async def handle(self, request: HttpRequest[MLInputPredictionDTO]) -> Union[HttpResponse[MLOutputPredictionDTO], HttpResponse[ErrorDTO]]:
+        try:
+            body = MLInputPredictionDTO.model_validate(request.body)
+            result = await self.__ml_prediction_service.execute(data=body)
+            return HttpResponse[MLOutputPredictionDTO](
+                status_code=200,
+                body=result
+            )
+        except Exception as e:
+            return HttpResponse[ErrorDTO](
+                status_code=500,
+                body=ErrorDTO(
+                    message="Error making prediction",
                     error=str(e)
                 )
             )
