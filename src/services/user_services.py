@@ -80,6 +80,8 @@ class DeleteUserOutputDTO(BaseModel):
 class DeleteDTO(BaseModel):
     id:UUID
 
+class DeleteUser:
+    
     def __init__(self, user_repositoty:BaseRepository[User]) -> None:
         self.__user_repositoty = user_repositoty
     

@@ -10,8 +10,8 @@ Base = declarative_base()
 class BaseModel(Base):
 
     __abstract__ = True
-    id:Mapped[UUID] = mapped_column(SQLAlchemyUUID, primary_key=True, default_factory=uuid7)
-    created_at:Mapped[datetime] = mapped_column(DateTime, default_factory=lambda: datetime.now(UTC))
+    id:Mapped[UUID] = mapped_column(SQLAlchemyUUID, primary_key=True, default=uuid7)
+    created_at:Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
 class User(BaseModel):
     __tablename__ = "users"

@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 
 class BaseUrlConnection(ABC):
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def get_url(cls) -> str:...
 
 
