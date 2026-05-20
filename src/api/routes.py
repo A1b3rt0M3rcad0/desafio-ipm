@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Body, Request, APIRouter
+from fastapi import Body, Query, Request, APIRouter
 from fastapi.responses import JSONResponse
 
 from src.api.adapter import EmptyDTO, FastAPIAdapter
@@ -18,6 +18,7 @@ from src.services.user_services import (
     UpdateUserDTO,
     DeleteDTO,
 )
+from uuid import UUID
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -38,23 +39,24 @@ async def create_user(
         )
 
 
-@router.post("/read_user")
+@router.get("/read_user")
 async def read_user(
     request: Request,
-    body: Annotated[ReadUserDTO, Body()],
+    id: Annotated[str, Query()],
 ) -> JSONResponse:
     async with SessionManager(ENGINE) as session_manager:
         controller = read_user_composer(session_manager)
+        query = ReadUserDTO(id=UUID(id))
         return await FastAPIAdapter.adapt(
             controller=controller,
             request=request,
-            body_model=body,
-            query_model=EmptyDTO(),
+            body_model=EmptyDTO(),
+            query_model=query,
             path_model=EmptyDTO(),
         )
 
 
-@router.post("/update_user")
+@router.patch("/update_user")
 async def update_user(
     request: Request,
     body: Annotated[UpdateUserDTO, Body()],
@@ -70,7 +72,7 @@ async def update_user(
         )
 
 
-@router.post("/delete_user")
+@router.delete("/delete_user")
 async def delete_user(
     request: Request,
     body: Annotated[DeleteDTO, Body()],

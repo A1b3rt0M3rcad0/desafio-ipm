@@ -29,9 +29,13 @@ class FastAPIAdapter:
                 url=str(request.url),
                 method=request.method,
                 headers=dict(request.headers),
-                body=body_model.model_validate(raw_body),
-                query_params=query_model.model_validate(dict(request.query_params)),
-                path_params=path_model.model_validate(dict(request.path_params)),
+                body=FastAPIAdapter.__resolve(body_model, raw_body),
+                query_params=FastAPIAdapter.__resolve(
+                    query_model, dict(request.query_params)
+                ),
+                path_params=FastAPIAdapter.__resolve(
+                    path_model, dict(request.path_params)
+                ),
                 user=getattr(request.state, "user", None),
             )
         except ValidationError as error:
@@ -50,6 +54,12 @@ class FastAPIAdapter:
             content=FastAPIAdapter.__serialize(http_response.body),
             headers=http_response.headers,
         )
+
+    @staticmethod
+    def __resolve(model: Type[BaseModel] | BaseModel, raw: Any) -> Any:
+        if isinstance(model, BaseModel):
+            return model
+        return model.model_validate(raw)
 
     @staticmethod
     def __serialize(body: Any) -> Any:

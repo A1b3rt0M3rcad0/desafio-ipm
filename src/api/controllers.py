@@ -67,8 +67,8 @@ class ReadUserController(BaseController):
 
     async def handle(self, request: HttpRequest[ReadUserDTO]) -> Union[HttpResponse[UserOutput], HttpResponse[ErrorDTO]]:
         try:
-            body = ReadUserDTO.model_validate(request.body)
-            result = await self.__read_user_service.execute(data=body)
+            query = ReadUserDTO.model_validate(request.query_params)
+            result = await self.__read_user_service.execute(data=query)
             if result is None:
                 return HttpResponse[ErrorDTO](
                     status_code=404,
