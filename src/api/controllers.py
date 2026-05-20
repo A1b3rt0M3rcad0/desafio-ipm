@@ -20,6 +20,8 @@ from src.services.ml_services import (
     MLPredictionService
 )
 
+from src.services.login_services import LoginService, LoginDTO
+
 class ErrorDTO(BaseModel):
     message:str
     error:str
@@ -181,6 +183,36 @@ class MLPredictionController(BaseController):
                 status_code=500,
                 body=ErrorDTO(
                     message="Error making prediction",
+                    error=str(e)
+                )
+            )
+
+class LoginController(BaseController):
+
+    def __init__(self, login_service: LoginService) -> None:
+        self.__login_service = login_service
+
+    async def handle(self, request: HttpRequest[LoginDTO]) -> Union[HttpResponse[str], HttpResponse[ErrorDTO]]:
+        try:
+            body = LoginDTO.model_validate(request.body)
+            result = self.__login_service.execute(login_dto=body)
+            return HttpResponse[str](
+                status_code=200,
+                body=result
+            )
+        except Exception as e:
+            if type(e) == ValueError:
+                return HttpResponse[ErrorDTO](
+                    status_code=401,
+                    body=ErrorDTO(
+                        message="Invalid credentials",
+                        error=str(e)
+                    )
+                )
+            return HttpResponse[ErrorDTO](
+                status_code=500,
+                body=ErrorDTO(
+                    message="Internal Server Error",
                     error=str(e)
                 )
             )

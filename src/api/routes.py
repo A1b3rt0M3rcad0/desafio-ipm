@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Body, Query, Request, APIRouter
 from fastapi.responses import JSONResponse
 
+from src.services.login_services import LoginDTO
 from src.services.ml_services import MLInputPredictionDTO
 from src.api.adapter import EmptyDTO, FastAPIAdapter
 from src.api.composers import (
@@ -10,7 +11,8 @@ from src.api.composers import (
     read_user_composer,
     update_user_composer,
     delete_user_composer,
-    ml_prediction_composer
+    ml_prediction_composer,
+    login_composer
 )
 from src.api.config import ENGINE
 from src.infra.config.session_manager import SessionManager
@@ -95,6 +97,20 @@ async def ml_prediction(
     body: Annotated[MLInputPredictionDTO, Body()],
 ) -> JSONResponse:
     controller = ml_prediction_composer()
+    return await FastAPIAdapter.adapt(
+        controller=controller,
+        request=request,
+        body_model=body,
+        query_model=EmptyDTO(),
+        path_model=EmptyDTO(),
+    )
+
+@router.post("/login")
+async def login(
+    request: Request,
+    body: Annotated[LoginDTO, Body()],
+) -> JSONResponse:
+    controller = login_composer()
     return await FastAPIAdapter.adapt(
         controller=controller,
         request=request,

@@ -6,11 +6,13 @@ from src.api.controllers import CreateUserController
 from src.api.controllers import ReadUserController
 from src.api.controllers import UpdateUserController
 from src.api.controllers import DeleteUserController
+from src.api.controllers import LoginController
 from src.services.user_services import CreateUser
 from src.services.user_services import ReadUser
 from src.services.user_services import UpdateUser
 from src.services.user_services import DeleteUser
 from src.services.ml_services import MLPredictionService
+from src.services.login_services import LoginService
 
 def create_user_composer(session_manager: SessionManager) -> BaseController:
     user_repository = UserRepository(session_manager)
@@ -39,4 +41,9 @@ def delete_user_composer(session_manager: SessionManager) -> BaseController:
 def ml_prediction_composer() -> BaseController:
     ml_prediction_service = MLPredictionService()
     controller = MLPredictionController(ml_prediction_service)
+    return controller
+
+def login_composer() -> BaseController:
+    login_service = LoginService()
+    controller = LoginController(login_service)
     return controller
