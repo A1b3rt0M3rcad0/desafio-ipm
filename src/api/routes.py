@@ -1,7 +1,8 @@
 from typing import Annotated
 
-from fastapi import Body, Query, Request, APIRouter
+from fastapi import Body, Query, Request, APIRouter, Depends
 from fastapi.responses import JSONResponse
+from src.api.middleware import protect
 
 from src.services.login_services import LoginDTO
 from src.services.ml_services import MLInputPredictionDTO
@@ -31,6 +32,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 async def create_user(
     request: Request,
     body: Annotated[CreateUserDTO, Body()],
+    _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
     async with SessionManager(ENGINE) as session_manager:
         controller = create_user_composer(session_manager)
@@ -47,6 +49,7 @@ async def create_user(
 async def read_user(
     request: Request,
     id: Annotated[UUID, Query()],
+    _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
     async with SessionManager(ENGINE) as session_manager:
         controller = read_user_composer(session_manager)
@@ -64,6 +67,7 @@ async def read_user(
 async def update_user(
     request: Request,
     body: Annotated[UpdateUserDTO, Body()],
+    _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
     async with SessionManager(ENGINE) as session_manager:
         controller = update_user_composer(session_manager)
@@ -80,6 +84,7 @@ async def update_user(
 async def delete_user(
     request: Request,
     body: Annotated[DeleteDTO, Body()],
+    _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
     async with SessionManager(ENGINE) as session_manager:
         controller = delete_user_composer(session_manager)
@@ -95,6 +100,7 @@ async def delete_user(
 async def ml_prediction(
     request: Request,
     body: Annotated[MLInputPredictionDTO, Body()],
+    _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
     controller = ml_prediction_composer()
     return await FastAPIAdapter.adapt(
