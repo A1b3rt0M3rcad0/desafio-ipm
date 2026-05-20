@@ -52,14 +52,14 @@ class ReadUser:
 
 class UpdateUserDTO(BaseModel):
     id:UUID
-    name:Optional[str]
-    email:Optional[str]
+    name:Optional[str] = None
+    email:Optional[str] = None
 
 class UpdateUser:
 
-    def __init__(self, user_repositoty:BaseRepository[User]) -> None:
-        self.__user_repositoty = user_repositoty
-    
+    def __init__(self, user_repository: BaseRepository[User]) -> None:
+        self.__user_repository = user_repository
+
     async def execute(self, data: UpdateUserDTO) -> Optional[UserOutput]:
         current_user = await self.__user_repository.read(data.id)
         if current_user is None:
