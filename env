@@ -1,3 +1,10 @@
 JWT_SECRET_KEY=wOCqL6THIyc8sRMbs2RPrYynNZT6kkeTCHN2ej5knTg
 ADMIN_EMAIL=admin@gmail.com
 ADMIN_PASSWORD=password
+
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_PORT=5432
+POSTGRES_DB=ipm_db
+
+USE_SQLITE=1 # Coloque 1 se quiser usar SQLite, ou 0 para usar PostgreSQL

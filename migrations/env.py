@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -27,6 +30,16 @@ target_metadata = Base.metadata
 # ... etc.
 
 from src.infra.config.url_connections import SQLiteUrlConnetion
+from src.infra.config.url_connections import PostgresUrlConnection
+import os
+
+def create_url() -> str:
+    url = None
+    if os.getenv("USE_SQLITE") == "1":
+        url = SQLiteUrlConnetion.get_url().replace("+aiosqlite", "")
+    else:    
+        url = PostgresUrlConnection.get_url()
+    return url
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -40,7 +53,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    config.set_main_option("sqlalchemy.url", SQLiteUrlConnetion.get_url().replace("+aiosqlite", ""))
+    config.set_main_option("sqlalchemy.url", create_url())
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -60,7 +73,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    config.set_main_option("sqlalchemy.url", SQLiteUrlConnetion.get_url().replace("+aiosqlite", ""))
+    config.set_main_option("sqlalchemy.url", create_url())
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
