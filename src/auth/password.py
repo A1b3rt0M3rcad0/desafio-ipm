@@ -1,11 +1,15 @@
+"""Hash e verificação de senhas com bcrypt via passlib."""
+
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
+    """Retorna o hash bcrypt da senha fornecida."""
     return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verifica se a senha em texto plano corresponde ao hash bcrypt."""
     return pwd_context.verify(plain_password, hashed_password)
 
 

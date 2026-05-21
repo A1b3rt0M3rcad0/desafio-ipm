@@ -1,3 +1,5 @@
+"""Adaptador que converte requests/responses do FastAPI para HttpRequest/HttpResponse internos."""
+
 from typing import Any
 
 from fastapi import Request
@@ -16,6 +18,7 @@ class FastAPIAdapter:
         query_model: type[BaseModel] | BaseModel = EmptyDTO,
         path_model: type[BaseModel] | BaseModel = EmptyDTO,
     ) -> JSONResponse:
+        """Converte a request do FastAPI em HttpRequest, chama o controller e retorna JSONResponse."""
         try:
             raw_body: Any = await request.json()
         except Exception:
@@ -54,12 +57,14 @@ class FastAPIAdapter:
 
     @staticmethod
     def __resolve(model: type[BaseModel] | BaseModel, raw: Any) -> Any:
+        """Valida e converte dados brutos usando o modelo Pydantic informado."""
         if isinstance(model, BaseModel):
             return model
         return model.model_validate(raw)
 
     @staticmethod
     def __serialize(body: Any) -> Any:
+        """Serializa objetos Pydantic, listas e dicionários para JSON."""
         if isinstance(body, BaseModel):
             return body.model_dump(mode="json")
 

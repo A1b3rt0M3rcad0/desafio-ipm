@@ -1,3 +1,5 @@
+"""Middleware de autenticação JWT para proteção de rotas."""
+
 import os
 from typing import Any
 
@@ -17,7 +19,7 @@ bearer_scheme = HTTPBearer(
 async def protect(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ) -> dict[str, Any]:
-    
+    """Dependência FastAPI que valida o token JWT e verifica permissões de admin."""
     token = credentials.credentials
     payload = jwt_access_token.decode_token(token)
 

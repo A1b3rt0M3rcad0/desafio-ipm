@@ -1,3 +1,5 @@
+"""Gerenciador de sessão assíncrona do SQLAlchemy com commit/rollback automático (Unit of Work)."""
+
 from typing import Optional, Self
 from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine
 from sqlalchemy.orm import sessionmaker
@@ -11,6 +13,7 @@ class SessionManager:
     
     @property
     def session(self) -> AsyncSession:
+        """Retorna a sessão ativa ou levanta erro se não inicializada."""
         if self.__session is None:
             raise RuntimeError(
                 "Session not initialized",
@@ -18,6 +21,7 @@ class SessionManager:
         return self.__session
     
     async def __aenter__(self) -> Self:
+        """Cria uma nova sessão assíncrona ao entrar no contexto."""
         sessionmake = sessionmaker(bind=self.__engine, expire_on_commit=False, class_=AsyncSession)
         self.__session = sessionmake()
         if self.__session is None:
@@ -25,6 +29,7 @@ class SessionManager:
         return self
     
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Faz commit em caso de sucesso ou rollback em caso de exceção, e fecha a sessão."""
         try:
             if exc_type:
                 await self.__session.rollback()

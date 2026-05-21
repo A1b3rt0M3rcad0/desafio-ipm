@@ -1,3 +1,5 @@
+"""Controllers que orquestram HttpRequest → caso de uso → HttpResponse."""
+
 from typing import Union
 from abc import ABC, abstractmethod
 from src.api.http import HttpRequest, HttpResponse
@@ -29,7 +31,9 @@ class ErrorDTO(BaseModel):
 class BaseController(ABC):
 
     @abstractmethod
-    async def handle(self, request:HttpRequest) -> HttpResponse:...
+    async def handle(self, request:HttpRequest) -> HttpResponse:
+        """Processa uma HttpRequest e retorna uma HttpResponse."""
+        ...
 
 
 class CreateUserController(BaseController):
@@ -38,6 +42,7 @@ class CreateUserController(BaseController):
         self.__create_user_service = create_user_service
 
     async def handle(self, request: HttpRequest[CreateUserDTO]) -> Union[HttpResponse[UserOutput], HttpResponse[ErrorDTO]]:
+        """Processa a criação de usuário com tratamento de erro de email duplicado."""
         try:
             body = CreateUserDTO.model_validate(request.body)
             result = await self.__create_user_service.execute(data=body)
@@ -74,6 +79,7 @@ class ReadUserController(BaseController):
         self.__read_user_service = read_user_service
 
     async def handle(self, request: HttpRequest[ReadUserDTO]) -> Union[HttpResponse[UserOutput], HttpResponse[ErrorDTO]]:
+        """Processa a leitura de usuário por ID com resposta 404 se não encontrado."""
         try:
             query = ReadUserDTO.model_validate(request.query_params)
             result = await self.__read_user_service.execute(data=query)
@@ -105,6 +111,7 @@ class UpdateUserController(BaseController):
         self.__update_user_service = update_user_service
 
     async def handle(self, request: HttpRequest[UpdateUserDTO]) -> Union[HttpResponse[UserOutput], HttpResponse[ErrorDTO]]:
+        """Processa a atualização de usuário com tratamento de conflito de email."""
         try:
             body = UpdateUserDTO.model_validate(request.body)
             result = await self.__update_user_service.execute(data=body)
@@ -149,6 +156,7 @@ class DeleteUserController(BaseController):
         self.__delete_user_service = delete_user_service
 
     async def handle(self, request: HttpRequest[DeleteDTO]) -> Union[HttpResponse[DeleteUserOutputDTO], HttpResponse[ErrorDTO]]:
+        """Processa a remoção de usuário e retorna o resultado da operação."""
         try:
             body = DeleteDTO.model_validate(request.body)
             result = await self.__delete_user_service.execute(data=body)
@@ -171,6 +179,7 @@ class MLPredictionController(BaseController):
         self.__ml_prediction_service = ml_prediction_service
 
     async def handle(self, request: HttpRequest[MLInputPredictionDTO]) -> Union[HttpResponse[MLOutputPredictionDTO], HttpResponse[ErrorDTO]]:
+        """Processa a predição do modelo ML e retorna o resultado."""
         try:
             body = MLInputPredictionDTO.model_validate(request.body)
             result = await self.__ml_prediction_service.execute(data=body)
@@ -193,6 +202,7 @@ class LoginController(BaseController):
         self.__login_service = login_service
 
     async def handle(self, request: HttpRequest[LoginDTO]) -> Union[HttpResponse[str], HttpResponse[ErrorDTO]]:
+        """Processa o login e retorna token JWT ou erro 401."""
         try:
             body = LoginDTO.model_validate(request.body)
             result = self.__login_service.execute(login_dto=body)

@@ -1,3 +1,5 @@
+"""Estratégias de URL de conexão para SQLite e PostgreSQL."""
+
 from abc import ABC, abstractmethod
 import os
 
@@ -13,6 +15,7 @@ class SQLiteUrlConnetion(BaseUrlConnection):
 
     @classmethod
     def get_url(cls) -> str:
+        """Retorna a URL de conexão SQLite."""
         return cls.url
 
 class PostgresUrlConnection(BaseUrlConnection):
@@ -30,4 +33,5 @@ class PostgresUrlConnection(BaseUrlConnection):
 
     @classmethod
     def get_url(cls) -> str:
+        """Retorna a URL de conexão PostgreSQL."""
         return cls.url

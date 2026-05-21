@@ -1,3 +1,5 @@
+"""Seleção da engine de banco (SQLite ou PostgreSQL) com base em USE_SQLITE."""
+
 from src.infra.config.engine import CreateEngine
 from src.infra.config.url_connections import SQLiteUrlConnetion, PostgresUrlConnection
 import os

@@ -1,3 +1,5 @@
+"""Serviço de login com validação de credenciais e geração de token JWT."""
+
 from src.auth.jwt_access_token import JWTAccessToken, JwtData
 from src.auth.password import hash_password, verify_password
 from pydantic import BaseModel
@@ -12,7 +14,7 @@ class LoginService:
         self.jwt_access_token = JWTAccessToken()
 
     def execute(self, login_dto: LoginDTO) -> str:
-        
+        """Valida as credenciais contra variáveis de ambiente e retorna um token JWT."""
         admin_email = os.getenv("ADMIN_EMAIL")
         admin_password = os.getenv("ADMIN_PASSWORD")
 

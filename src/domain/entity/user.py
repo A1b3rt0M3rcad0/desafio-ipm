@@ -1,3 +1,5 @@
+"""Entidade de domínio User."""
+
 from typing import Optional
 from uuid6 import uuid7
 from datetime import datetime, UTC

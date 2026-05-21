@@ -1,3 +1,5 @@
+"""Interface genérica de repositório com operações CRUD abstratas."""
+
 from typing import Generic, TypeVar, Optional
 from abc import ABC, abstractmethod
 from uuid import UUID

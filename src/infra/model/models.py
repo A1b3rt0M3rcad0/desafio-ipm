@@ -1,3 +1,5 @@
+"""Modelos ORM do SQLAlchemy — tabela base e entidade User."""
+
 from datetime import datetime, UTC
 from sqlalchemy.orm import Mapped, mapped_column, declarative_base
 from sqlalchemy import UUID as SQLAlchemyUUID

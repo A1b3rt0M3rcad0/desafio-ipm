@@ -1,3 +1,5 @@
+"""Tipos genéricos HttpRequest e HttpResponse para desacoplamento do framework."""
+
 from typing import Any, TypeVar, Generic, Optional
 from pydantic import BaseModel, Field
 

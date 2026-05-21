@@ -1,3 +1,5 @@
+"""Implementação concreta do repositório de usuários com SQLAlchemy."""
+
 from typing import Optional
 from uuid import UUID
 from src.domain.entity.user import User as UserEntity
@@ -11,6 +13,7 @@ class UserRepository(BaseRepository[UserEntity]):
         self.__session_manager = session_manager
     
     async def create(self, entity: UserEntity) -> UserEntity:
+        """Insere um novo usuário no banco e retorna a entidade persistida."""
         session = self.__session_manager.session
         model = UserModel(**entity.model_dump(mode="python"))
         session.add(model)
@@ -19,6 +22,7 @@ class UserRepository(BaseRepository[UserEntity]):
         return UserEntity.model_validate(model)
 
     async def read(self, id:UUID) -> Optional[UserEntity]:
+        """Busca um usuário pelo ID e retorna a entidade ou None."""
         session = self.__session_manager.session
         model = await session.get(UserModel, id)
         if model is None:
@@ -26,6 +30,7 @@ class UserRepository(BaseRepository[UserEntity]):
         return UserEntity.model_validate(model)
     
     async def update(self, entity: UserEntity) -> UserEntity:
+        """Atualiza os campos de um usuário existente e retorna a entidade atualizada."""
         session = self.__session_manager.session
         model = await session.get(UserModel, entity.id)
         if model is None:
@@ -41,6 +46,7 @@ class UserRepository(BaseRepository[UserEntity]):
         return UserEntity.model_validate(model)
     
     async def delete(self, id: UUID) -> Optional[UUID]:
+        """Remove um usuário pelo ID e retorna o ID removido ou None."""
         session = self.__session_manager.session
         model = await session.get(UserModel, id)
         if model is None:

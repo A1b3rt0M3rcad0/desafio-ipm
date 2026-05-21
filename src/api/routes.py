@@ -1,3 +1,5 @@
+"""Definição das rotas da API REST com prefixo /users."""
+
 from typing import Annotated
 
 from fastapi import Body, Query, Request, APIRouter, Depends
@@ -34,6 +36,7 @@ async def create_user(
     body: Annotated[CreateUserDTO, Body()],
     _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
+    """Cria um novo usuário. Requer autenticação JWT."""
     async with SessionManager(ENGINE) as session_manager:
         controller = create_user_composer(session_manager)
         return await FastAPIAdapter.adapt(
@@ -51,6 +54,7 @@ async def read_user(
     id: Annotated[UUID, Query()],
     _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
+    """Busca um usuário pelo ID. Requer autenticação JWT."""
     async with SessionManager(ENGINE) as session_manager:
         controller = read_user_composer(session_manager)
         query = ReadUserDTO(id=id)
@@ -69,6 +73,7 @@ async def update_user(
     body: Annotated[UpdateUserDTO, Body()],
     _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
+    """Atualiza os dados de um usuário. Requer autenticação JWT."""
     async with SessionManager(ENGINE) as session_manager:
         controller = update_user_composer(session_manager)
         return await FastAPIAdapter.adapt(
@@ -86,6 +91,7 @@ async def delete_user(
     body: Annotated[DeleteDTO, Body()],
     _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
+    """Remove um usuário pelo ID. Requer autenticação JWT."""
     async with SessionManager(ENGINE) as session_manager:
         controller = delete_user_composer(session_manager)
         return await FastAPIAdapter.adapt(
@@ -102,6 +108,7 @@ async def ml_prediction(
     body: Annotated[MLInputPredictionDTO, Body()],
     _: Annotated[dict, Depends(protect)]
 ) -> JSONResponse:
+    """Executa uma predição do modelo ML. Requer autenticação JWT."""
     controller = ml_prediction_composer()
     return await FastAPIAdapter.adapt(
         controller=controller,
@@ -116,6 +123,7 @@ async def login(
     request: Request,
     body: Annotated[LoginDTO, Body()],
 ) -> JSONResponse:
+    """Autentica o usuário e retorna um token JWT. Rota pública."""
     controller = login_composer()
     return await FastAPIAdapter.adapt(
         controller=controller,

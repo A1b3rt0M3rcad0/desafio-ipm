@@ -1,3 +1,5 @@
+"""Geração e decodificação de tokens JWT com expiração configurável por variável de ambiente."""
+
 from src.auth.jwt_secret_key import JWT_SECRET_KEY
 from pydantic import BaseModel, Field
 import jwt
@@ -11,6 +13,7 @@ class JwtData(BaseModel):
     exp: int | None = None
 
     def to_dict(self) -> dict:
+        """Converte os dados do JWT para dicionário."""
         return {"email": self.email, "exp": self.exp}
 
 class JWTAccessToken(BaseModel):
@@ -18,6 +21,7 @@ class JWTAccessToken(BaseModel):
     algorithm: str = "HS256"
 
     def tokenize(self, data: JwtData) -> str:
+        """Gera um token JWT com o claim exp calculado a partir da variável de ambiente."""
         if data.exp is None:
             exp = int((datetime.now(timezone.utc) + timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)).timestamp())
         else:
@@ -26,6 +30,7 @@ class JWTAccessToken(BaseModel):
         return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
 
     def decode_token(self, token: str) -> JwtData:
+        """Decodifica e valida um token JWT, retornando os dados contidos nele."""
         try:
             data = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
             return JwtData(**data)

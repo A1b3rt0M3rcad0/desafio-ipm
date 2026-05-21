@@ -1,3 +1,5 @@
+"""Serviço de predição do modelo ML com execução em thread pool."""
+
 from src.ml.scaler import SCALER
 from src.ml.model import MODEL
 from typing import List
@@ -23,10 +25,12 @@ class MLPredictionService:
         self.__executor = _executor
 
     async def execute(self, data: MLInputPredictionDTO) -> MLOutputPredictionDTO:
+        """Executa a predição em thread separada para não bloquear o event loop."""
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(self.__executor, self.__predict_sync, data)
 
     def __predict_sync(self, data: MLInputPredictionDTO) -> MLOutputPredictionDTO:
+        """Aplica o scaler e executa a predição de forma síncrona."""
         data_array = np.array([[data.a, data.b]])
         scaled_data = self.__scaler.scale(X=data_array)
         prediction = self.__model.predict(scaled_data)
