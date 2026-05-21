@@ -29,10 +29,12 @@ docker compose up --build
 
 ### Local (desenvolvimento)
 
+#### Baixe o uv antes de iniciar
+
 ```bash
 cp env .env
 uv sync
-python main.py
+uv run python main.py
 ```
 
 A API estará disponível em `http://localhost:8080`.
