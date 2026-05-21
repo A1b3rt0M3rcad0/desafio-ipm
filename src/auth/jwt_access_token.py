@@ -1,20 +1,29 @@
 from src.auth.jwt_secret_key import JWT_SECRET_KEY
 from pydantic import BaseModel, Field
 import jwt
+import os
+from datetime import datetime, timedelta, timezone
+
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
 class JwtData(BaseModel):
     email: str
-    expires_in: int | None = None
+    exp: int | None = None
 
     def to_dict(self) -> dict:
-        return {"email": self.email}
+        return {"email": self.email, "exp": self.exp}
 
 class JWTAccessToken(BaseModel):
     secret_key: str | None = Field(default=JWT_SECRET_KEY)
     algorithm: str = "HS256"
 
     def tokenize(self, data: JwtData) -> str:
-        return jwt.encode(data.to_dict(), self.secret_key, algorithm=self.algorithm)
+        if data.exp is None:
+            exp = int((datetime.now(timezone.utc) + timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)).timestamp())
+        else:
+            exp = data.exp
+        payload = {**data.to_dict(), "exp": exp}
+        return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
 
     def decode_token(self, token: str) -> JwtData:
         try:
