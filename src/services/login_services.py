@@ -18,6 +18,10 @@ class LoginService:
         admin_email = os.getenv("ADMIN_EMAIL")
         admin_password = os.getenv("ADMIN_PASSWORD")
 
+        # Em um sistema real, as credenciais estariam armazenadas no banco com senha hasheada.
+        # A validação seria: buscar o usuário pelo email e usar verify_password(senha_input, hash_do_banco).
+        # Como aqui usamos variáveis de ambiente e senha em plain text, a comparação é direta.
+        
         if login_dto.email == admin_email and login_dto.password == admin_password:
             jwt_data = JwtData(email=login_dto.email)
             return self.jwt_access_token.tokenize(jwt_data)
