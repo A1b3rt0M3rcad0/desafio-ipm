@@ -69,3 +69,9 @@ Caso queira rodar com docker coloque o (`USE_SQLITE=0`)
 ### Docs
 
 Acesse a rota `/docs` para acessar o Swagger
+
+## Observações sobre a entrega
+
+Todas as respostas, justificativas técnicas e explicações referentes às etapas do projeto estão documentadas no notebook `notebooks/prova.ipynb`.
+
+O notebook contém o desenvolvimento das análises, decisões tomadas, explicações dos códigos implementados e respostas às questões propostas durante o desafio.
