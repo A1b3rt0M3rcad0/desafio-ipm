@@ -77,3 +77,5 @@ Acesse a rota `/docs` para acessar o Swagger
 Todas as respostas, justificativas técnicas e explicações referentes às etapas do projeto estão documentadas no notebook `notebooks/prova.ipynb`.
 
 O notebook contém o desenvolvimento das análises, decisões tomadas, explicações dos códigos implementados e respostas às questões propostas durante o desafio.
+
+Quanto à persistência dos dados em volumes, optei por não incluí-la nesta entrega por se tratar de um desafio simples, cujo foco principal é a configuração e execução do ambiente da aplicação.
